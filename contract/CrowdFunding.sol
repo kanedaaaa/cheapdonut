@@ -9,9 +9,9 @@ contract Crowdfunding {
 
     Project[] private projects;
     
-    uint256 public price = 0.001 ether;
-    address payable _to;
-    address payable owner = payable(0xF6564f211F2cC3f8915E371154b1884615A7a052);
+    uint256 public price = 0.0001 ether; // arbitrary number under 0.1
+    address payable firstowner = payable(/*first address goes here*/);
+    address payable secondowner = payable(/*second here*/);
 
     event ProjectStarted(
         address contractAddress,
@@ -28,9 +28,10 @@ contract Crowdfunding {
         uint durationInDays,
         uint amountToRaise
     ) external payable {
-        require ( msg.value >= price);
+        require (msg.value >= price, "plz we need at least 0.1cTH");
         payable(msg.sender).transfer(msg.value-price);
-        owner.transfer(price);
+        firstowner.transfer(price/2); // 0.0001/2 goes to first address 
+        secondowner.transfer(price); // second takes the other part
         uint raiseUntil = block.timestamp.add(durationInDays.mul(1 days));
         Project newProject = new Project(msg.sender, title, description, raiseUntil, amountToRaise);
         projects.push(newProject);
